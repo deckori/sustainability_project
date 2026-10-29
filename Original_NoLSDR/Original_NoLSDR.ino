@@ -1,0 +1,71 @@
+#define RPWM 10
+#define LPWM 11
+#define R_EN 5
+#define L_EN 6
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(RPWM, OUTPUT);
+  pinMode(LPWM, OUTPUT);
+  pinMode(L_EN, OUTPUT);
+
+  analogWrite(RPWM, 0);
+  analogWrite(LPWM, 0);
+
+  digitalWrite(R_EN, LOW);
+  digitalWrite(L_EN, LOW);
+
+  delay(1000);
+}
+
+void loop() {
+
+  // RIGHT - 5 seconds
+  Serial.println("RIGHT");
+
+  analogWrite(RPWM, 0);
+  analogWrite(LPWM, 0);
+
+  digitalWrite(R_EN, HIGH);
+  digitalWrite(L_EN, HIGH);
+
+  analogWrite(RPWM, 150);
+  delay(30000);
+
+  // STOP - 2 seconds
+  Serial.println("STOP");
+
+  analogWrite(RPWM, 0);
+  analogWrite(LPWM, 0);
+
+  digitalWrite(R_EN, LOW);
+  digitalWrite(L_EN, LOW);
+
+  delay(30000);
+
+  // LEFT - 5 seconds
+  Serial.println("LEFT");
+
+  analogWrite(RPWM, 0);
+  analogWrite(LPWM, 0);
+
+  digitalWrite(R_EN, HIGH);
+  digitalWrite(L_EN, HIGH);
+
+  analogWrite(LPWM, 150);
+  delay(30000);
+
+  // STOP - 2 seconds
+  Serial.println("STOP");
+
+  analogWrite(RPWM, 0);
+  analogWrite(LPWM, 0);
+
+  digitalWrite(R_EN, LOW);
+  digitalWrite(L_EN, LOW);
+
+  delay(30000);
+
+  Serial.println("REPEATING LOOP");
+}

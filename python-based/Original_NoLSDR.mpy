@@ -1,0 +1,50 @@
+from machine import Pin, PWM
+from time import sleep
+
+# Initialize motor driver pins and PWM frequency (1 kHz)
+RPWM = PWM(Pin(25), freq=1000)
+LPWM = PWM(Pin(26), freq=1000)
+R_EN = Pin(27, Pin.OUT)
+L_EN = Pin(14, Pin.OUT)
+
+
+def stop_motor():
+    """Cuts all power and disables the motor driver."""
+    RPWM.duty_u16(0)
+    LPWM.duty_u16(0)
+    R_EN.value(0)
+    L_EN.value(0)
+
+
+# Initial system stop and startup delay
+stop_motor()
+sleep(1)
+
+# Motor speed value mapped to MicroPython's 16-bit PWM range (0 - 65535)
+# A value of 38588 roughly corresponds to ~60% speed.
+MOTOR_SPEED = 38588
+
+while True:
+    print("CLOCKWISE")
+    R_EN.value(1)
+    L_EN.value(1)
+    RPWM.duty_u16(MOTOR_SPEED)
+    LPWM.duty_u16(0)
+    sleep(30)
+
+    print("STOP")
+    stop_motor()
+    sleep(30)
+
+    print("ANTICLOCKWISE")
+    R_EN.value(1)
+    L_EN.value(1)
+    RPWM.duty_u16(0)
+    LPWM.duty_u16(MOTOR_SPEED)
+    sleep(30)
+
+    print("STOP")
+    stop_motor()
+    sleep(30)
+
+    print("REPEATING LOOP")
