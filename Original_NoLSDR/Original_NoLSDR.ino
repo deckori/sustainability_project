@@ -3,11 +3,14 @@
 #define R_EN 5
 #define L_EN 6
 
+int delay_num = 10000;
+
 void setup() {
   Serial.begin(9600);
 
   pinMode(RPWM, OUTPUT);
   pinMode(LPWM, OUTPUT);
+  pinMode(R_EN, OUTPUT);
   pinMode(L_EN, OUTPUT);
 
   analogWrite(RPWM, 0);
@@ -31,7 +34,7 @@ void loop() {
   digitalWrite(L_EN, HIGH);
 
   analogWrite(RPWM, 150);
-  delay(30000);
+  delay(delay_num);
 
   // STOP - 2 seconds
   Serial.println("STOP");
@@ -42,7 +45,7 @@ void loop() {
   digitalWrite(R_EN, LOW);
   digitalWrite(L_EN, LOW);
 
-  delay(30000);
+  delay(delay_num);
 
   // LEFT - 5 seconds
   Serial.println("LEFT");
@@ -52,9 +55,9 @@ void loop() {
 
   digitalWrite(R_EN, HIGH);
   digitalWrite(L_EN, HIGH);
-
++
   analogWrite(LPWM, 150);
-  delay(30000);
+  delay(delay_num);
 
   // STOP - 2 seconds
   Serial.println("STOP");
@@ -65,7 +68,7 @@ void loop() {
   digitalWrite(R_EN, LOW);
   digitalWrite(L_EN, LOW);
 
-  delay(30000);
+  delay(delay_num);
 
   Serial.println("REPEATING LOOP");
 }
