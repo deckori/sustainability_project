@@ -1,50 +1,138 @@
-from machine import Pin, PWM
+from machine import Pin, PWM, ADC
 from time import sleep
+import _thread
+from time import sleep, ticks_ms
 
-# Initialize motor driver pins and PWM frequency (1 kHz)
-RPWM = PWM(Pin(25), freq=1000)
-LPWM = PWM(Pin(26), freq=1000)
-R_EN = Pin(27, Pin.OUT)
-L_EN = Pin(14, Pin.OUT)
+motor_running = True
 
 
-def stop_motor():
-    """Cuts all power and disables the motor driver."""
-    RPWM.duty_u16(0)
-    LPWM.duty_u16(0)
-    R_EN.value(0)
-    L_EN.value(0)
+def turn(sleep_time, log_file_path):
+    # Initialize motor driver pins and PWM frequency (1 kHz)
+    RPWM = PWM(Pin(25), freq=1000)
+    LPWM = PWM(Pin(26), freq=1000)
+    R_EN = Pin(14, Pin.OUT)
+    L_EN = Pin(27, Pin.OUT)
 
+    def stop_motor():
+        """Cuts all power and disables the motor driver."""
+        RPWM.duty_u16(0)
+        LPWM.duty_u16(0)
+        R_EN.value(0)
+        L_EN.value(0)
 
-# Initial system stop and startup delay
-stop_motor()
-sleep(1)
-
-# Motor speed value mapped to MicroPython's 16-bit PWM range (0 - 65535)
-# A value of 38588 roughly corresponds to ~60% speed.
-MOTOR_SPEED = 38588
-
-while True:
-    print("CLOCKWISE")
-    R_EN.value(1)
-    L_EN.value(1)
-    RPWM.duty_u16(MOTOR_SPEED)
-    LPWM.duty_u16(0)
-    sleep(30)
-
-    print("STOP")
+    # Initial system stop and startup delay
     stop_motor()
-    sleep(30)
+    sleep(1)
 
-    print("ANTICLOCKWISE")
-    R_EN.value(1)
-    L_EN.value(1)
-    RPWM.duty_u16(0)
-    LPWM.duty_u16(MOTOR_SPEED)
-    sleep(30)
+    # Motor speed value mapped to MicroPython's 16-bit PWM range (0 - 65535)
+    # A value of 38588 roughly corresponds to ~60% speed.
+    MOTOR_SPEED = 38588
 
-    print("STOP")
-    stop_motor()
-    sleep(30)
+    start_time = ticks_ms()
 
-    print("REPEATING LOOP")
+    with open(log_file_path, "a") as f:
+        while True:
+            print("CLOCKWISE")
+
+            t_clock = ticks_ms() - start_time
+            print(f"{t_clock}\tCLOCKWISE")
+            f.write(f"{t_clock}\tCLOCKWISE\n")
+            f.flush()
+
+            R_EN.value(1)
+            L_EN.value(1)
+            RPWM.duty_u16(MOTOR_SPEED)
+            LPWM.duty_u16(0)
+            sleep(sleep_time)
+
+            print("STOP")
+
+            t_stop1 = ticks_ms() - start_time
+            print(f"{t_stop1}\tSTOP")
+            f.write(f"{t_stop1}\tSTOP\n")
+            f.flush()
+
+            stop_motor()
+            sleep(sleep_time)
+
+            print("ANTICLOCKWISE")
+
+            t_anticlock = ticks_ms() - start_time
+            print(f"{t_anticlock}\tANTICLOCKWISE")
+            f.write(f"{t_anticlock}\tANTICLOCKWISE\n")
+            f.flush()
+
+            R_EN.value(1)
+            L_EN.value(1)
+            RPWM.duty_u16(0)
+            LPWM.duty_u16(MOTOR_SPEED)
+            sleep(sleep_time)
+
+            print("STOP")
+
+            t_stop2 = ticks_ms() - start_time
+            print(f"{t_stop2}\tSTOP")
+            f.write(f"{t_stop2}\tSTOP\n")
+            f.flush()
+
+            stop_motor()
+            sleep(sleep_time)
+
+            # print("REPEATING LOOP")
+            global motor_running
+            motor_running = False
+            break
+
+
+def logger(pins, sample_interval, log_file_path):
+    global motor_running
+    adcs = []
+    for p in pins:
+        a = ADC(Pin(p))
+        a.atten(ADC.ATTN_11DB)
+        adcs.append((p, a))
+
+    start_time = ticks_ms()
+
+    with open(log_file_path, "a") as f:
+        while motor_running:
+            t_elapsed = ticks_ms() - start_time
+            readings = [f"t:{t_elapsed}"]
+
+            for p, a in adcs:
+                uv = a.read_uv()
+                volts = uv / 1_000_000.0
+                readings.append(f"P{p}:{volts:.3f}V")
+
+            line = "\t".join(readings)
+            print(line)
+            f.write(line + "\n")
+            f.flush()
+
+            sleep(sample_interval)
+
+
+if __name__ == "__main__":
+    motor_log = "motor_turns.txt"
+    adc_log = "adc_readings.txt"
+    target_pins = [
+        4,  # GND
+        0,  # Vcc
+        2,  # L_EN
+        15,  # R_EN
+        12,  # RPWM
+        13,  # LPWM
+    ]
+
+    # Clear or initialize log files at startup
+    with open(motor_log, "w") as f:
+        f.write("Time(ms)\tState\n")
+
+    with open(adc_log, "w") as f:
+        f.write("Time(ms)\tReadings...\n")
+
+    # Start motor control loop on background thread
+    _thread.start_new_thread(turn, (2, motor_log))
+
+    # Run multi-pin ADC logger on main thread
+    logger(target_pins, 0.2, adc_log)

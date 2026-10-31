@@ -1,0 +1,41 @@
+from machine import Pin, ADC, PWM
+from time import sleep
+
+DEADBAND = 300
+SPEED = 600
+MOVE_TIME = 0.2
+DELAY = 1
+
+left_ldr = ADC(Pin(32))
+right_ldr = ADC(Pin(33))
+left_ldr.atten(ADC.ATTN_11DB)
+right_ldr.atten(ADC.ATTN_11DB)
+
+rpwm = PWM(Pin(18), freq=1000)
+lpwm = PWM(Pin(19), freq=1000)
+rpwm.duty(0)
+lpwm.duty(0)
+
+
+def run(direction):
+    if direction > 0:
+        lpwm.duty(0)
+        rpwm.duty(SPEED)
+    else:
+        rpwm.duty(0)
+        lpwm.duty(SPEED)
+    sleep(MOVE_TIME)
+    rpwm.duty(0)  # stop
+    lpwm.duty(0)
+
+
+while True:
+    left = left_ldr.read()
+    right = right_ldr.read()
+
+    if right - left > DEADBAND:
+        run(1)
+    elif left - right > DEADBAND:
+        run(-1)
+
+    sleep(DELAY)
