@@ -1,10 +1,7 @@
-from machine import Pin, PWM, ADC
-from time import sleep
+from voltmeter.mpy import logger
 import _thread
-from time import sleep, ticks_ms
 
 motor_running = True
-
 
 
 if __name__ == "__main__":
