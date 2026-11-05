@@ -2,7 +2,7 @@ import sys
 import machine, onewire, ds18x20, time
 
 
-def temperature(log_file):
+def temperature(log_file, interval):
     ds = ds18x20.DS18X20(onewire.OneWire(machine.Pin(4)))
     try:
         rom = ds.scan()[0]
@@ -12,21 +12,27 @@ def temperature(log_file):
 
     start = time.ticks_ms()
     last = time.ticks_ms()
+
+    # 1st line of file
+    string = "time, temperature"
+    print(string)
+    log_file.write(string + "\n")
+
     while True:
-        if time.ticks_diff(time.ticks_ms(), last) >= 2000:
+        if time.ticks_diff(time.ticks_ms(), last) >= interval:
             last = time.ticks_ms()
+
             ds.convert_temp()
             time.sleep_ms(750)
+
             secs = time.ticks_diff(time.ticks_ms(), start) // 1000
-            stamp = "%02d:%02d:%02d" % (
-                secs // 3600,
-                (secs % 3600) // 60,
-                secs % 60,
-            )  # NEW
-            print(stamp, "-", ds.read_temp(rom))
-            log_file.write(f"{stamp} - {ds.read_temp(rom)}\n")
-            # log_file.write(stamp, "-", ds.read_temp(rom))
+            t = time.gmtime(secs)
+            stamp = "%02d:%02d:%02d" % (t[3], t[4], t[5])
+
+            string = f"{stamp}, {ds.read_temp(rom)}"
+            print(string)
+            log_file.write(string + "\n")
 
 
-with open("temp_log.txt", "w") as log_file:
-    temperature(log_file)
+# with open("temp_log.txt", "w") as log_file:
+#     temperature(log_file, 1000)
