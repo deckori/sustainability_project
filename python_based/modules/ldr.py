@@ -3,7 +3,9 @@ from time import sleep
 from turn_motor import turn_anticlockwise, turn_clockwise
 
 # ---- Settings ----
-DEADBAND = 50  # how big a left/right difference must be before moving
+BASE_DEADBAND_PERCENT = 0.05
+MIN_DEADBAND = 100
+# DEADBAND = 100  # how big a left/right difference must be before moving
 MOVE_TIME = 0.2  # seconds the motor runs per correction
 DELAY = 1  # seconds between checks
 
@@ -18,11 +20,23 @@ right_ldr.atten(ADC.ATTN_11DB)
 while True:
     left = left_ldr.read()
     right = right_ldr.read()
-    print("Anticlock:", left, "Clock:", right)  # remove later if you like
+    # Calculate average light level to gauge current brightness
+    avg_light = (left + right) / 2
 
-    if right - left > DEADBAND:
-        turn_clockwise()  # turn right
-    elif left - right > DEADBAND:
-        turn_anticlockwise()  # turn left
+    # Scale deadband dynamically based on ambient light
+    scaled_deadband = max(MIN_DEADBAND, avg_light * BASE_DEADBAND_PERCENT)
+
+    error = abs(right - left)
+    print(f"Left: {left}, Right: {right}, Deadband: {scaled_deadband:.1f}")
+
+    if error > scaled_deadband:
+        if right > left:
+            turn_clockwise()
+            print("Clockwise")
+        else:
+            turn_anticlockwise()
+            print("Anti-clockwise")
+    else:
+        print("Stay")
 
     sleep(DELAY)
