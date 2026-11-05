@@ -2,7 +2,7 @@ from machine import Pin, PWM, ADC
 from time import sleep, ticks_ms
 
 
-def motor_turn(state, speed=38588, enable=1):
+def motor_turn(state, speed, enable=1):
     # Initialize motor driver pins and PWM frequency (1 kHz)
     RPWM = PWM(Pin(25), freq=1000)
     LPWM = Pin(26, Pin.OUT)
@@ -20,15 +20,15 @@ def motor_turn(state, speed=38588, enable=1):
 
 def stop_motor():
     # Cuts all power and disables the motor driver
-    motor_turn(state=0, enable=0)
+    motor_turn(state=0, speed=38588, enable=0)
 
 
-def turn_clockwise():
-    motor_turn(0)
+def turn_clockwise(speed=38588):
+    motor_turn(0, speed)
 
 
-def turn_anticlockwise():
-    motor_turn(1)
+def turn_anticlockwise(speed=38588):
+    motor_turn(1, speed)
 
 
 print("turn")
