@@ -25,14 +25,13 @@ def temperature(log_file, interval):
             ds.convert_temp()
             time.sleep_ms(750)
 
-            secs = time.ticks_diff(time.ticks_ms(), start) // 1000
-            t = time.gmtime(secs)
-            stamp = "%02d:%02d:%02d" % (t[3], t[4], t[5])
+            t = machine.RTC().datetime()
+            stamp = "%02d:%02d:%02d" % (t[4], t[5], t[6])
 
             string = f"{stamp}, {ds.read_temp(rom)}"
             print(string)
             log_file.write(string + "\n")
 
 
-# with open("temp_log.txt", "w") as log_file:
-#     temperature(log_file, 1000)
+with open("temp_log.txt", "a") as log_file:
+    temperature(log_file, 10000)
