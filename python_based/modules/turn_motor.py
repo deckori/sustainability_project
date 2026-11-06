@@ -24,11 +24,11 @@ def stop_motor():
 
 
 def turn_clockwise(speed=38588):
-    motor_turn(0, speed)
+    motor_turn(1, speed)
 
 
 def turn_anticlockwise(speed=38588):
-    motor_turn(1, speed)
+    motor_turn(0, speed)
 
 
 print("turn")
