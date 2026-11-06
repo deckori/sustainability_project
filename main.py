@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append("/remote/modules")
+sys.path.append("modules")
 
 from modules.alarm import alarm
 from modules.ldr import check_ldr
