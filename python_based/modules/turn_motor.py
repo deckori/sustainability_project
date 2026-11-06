@@ -31,6 +31,9 @@ def turn_anticlockwise(speed=38588):
     motor_turn(0, speed)
 
 
-print("turn")
-turn_anticlockwise()
-print("set")
+# print("turn")
+# stop_motor()
+# sleep(2)
+# turn_clockwise()
+# turn_anticlockwise()
+# print("set")
