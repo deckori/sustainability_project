@@ -6,6 +6,7 @@ from modules.alarm import alarm
 from modules.ldr import check_ldr
 from modules.temperature import temperature
 from modules.turn_motor import stop_motor
+from modules.stamp import get_stamp
 import _thread
 import time
 
@@ -24,7 +25,7 @@ try:
         # Run a single check cycle for LDR
         ldr = check_ldr()
 
-        if (temp or ldr) is None:
+        if temp is None or ldr is None:
             alarm()
         else:
             alarm(0)
