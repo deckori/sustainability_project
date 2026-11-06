@@ -33,7 +33,7 @@ try:
         # e.g., if action == "CLOCKWISE": ...
 
         time.sleep(DELAY)
-except:
+except KeyboardInterrupt:
     print(f"{get_stamp()}, SYSTEM, STATUS, Interrupted by user. Cleaning up...")
     alarm(0)  # Ensure the alarm turns off when exiting
     stop_motor()
