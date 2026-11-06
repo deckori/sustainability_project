@@ -1,12 +1,12 @@
 from machine import Pin, PWM, ADC, RTC
 from time import sleep, ticks_ms
-from stamp import stamp
+from stamp import get_stamp
 
 # Initialize motor driver pins and PWM frequency (1 kHz)
 RPWM = PWM(Pin(25), freq=1000)
 LPWM = Pin(26, Pin.OUT)
 EN = Pin(27, Pin.OUT)
-print(f"{stamp}, MOTOR, STATUS, Pins set ")
+print(f"{get_stamp()}, MOTOR, STATUS, Pins set ")
 
 turn_speed = RPWM
 direction = LPWM
@@ -23,17 +23,21 @@ def motor_turn(state, speed, enable=1):
 def stop_motor():
     # Cuts all power and disables the motor driver
     motor_turn(state=0, speed=38588, enable=0)
-    print(f"{stamp}, MOTOR, ACTION, Stopping")
+    print(f"{get_stamp()}, MOTOR, ACTION, Stopping")
 
 
 def turn_clockwise(speed=38588):
     motor_turn(1, speed)
-    print(f"{stamp}, MOTOR, ACTION, Turning clockwise")
+    print(f"{get_stamp()}, MOTOR, ACTION, Turning clockwise")
+    sleep(1)
+    stop_motor()
 
 
 def turn_anticlockwise(speed=38588):
     motor_turn(0, speed)
-    print(f"{stamp}, MOTOR, ACTION, Turning anticlockwise")
+    print(f"{get_stamp()}, MOTOR, ACTION, Turning anticlockwise")
+    sleep(1)
+    stop_motor()
 
 
 # print("turn")
