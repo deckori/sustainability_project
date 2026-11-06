@@ -1,37 +1,23 @@
 import sys
-import machine, onewire, ds18x20, time
+import machine, onewire, ds18x20
+from time import sleep_ms
+from stamp import stamp
+
+ds = ds18x20.DS18X20(onewire.OneWire(machine.Pin(4)))
+print(f"{stamp}, TEMP, STATUS, Pins set ")
 
 
-def temperature(log_file, interval):
-    ds = ds18x20.DS18X20(onewire.OneWire(machine.Pin(4)))
+def temperature():
     try:
-        rom = ds.scan()[0]
+        roms = ds.scan()
     except:
-        print("Temperature sensor: ERROR")
-        sys.exit()
+        print(f"{stamp}, TEMP, ERROR, Sensor malfunction")
+        return
+    rom = roms[0]
 
-    start = time.ticks_ms()
-    last = time.ticks_ms()
+    ds.convert_temp()
+    sleep_ms(750)  # Delay for finishing
 
-    # 1st line of file
-    string = "time, temperature"
-    print(string)
-    log_file.write(string + "\n")
+    print(f"{stamp}, TEMP, ACTION, {ds.read_temp(rom)}")
 
-    while True:
-        if time.ticks_diff(time.ticks_ms(), last) >= interval:
-            last = time.ticks_ms()
-
-            ds.convert_temp()
-            time.sleep_ms(750)
-
-            t = machine.RTC().datetime()
-            stamp = "%02d:%02d:%02d" % (t[4], t[5], t[6])
-
-            string = f"{stamp}, {ds.read_temp(rom)}"
-            print(string)
-            log_file.write(string + "\n")
-
-
-with open("temp_log.txt", "a") as log_file:
-    temperature(log_file, 10000)
+    return True
