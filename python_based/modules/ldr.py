@@ -3,7 +3,7 @@ from time import sleep
 from turn_motor import turn_anticlockwise, turn_clockwise
 
 # ---- Settings ----
-BASE_DEADBAND_PERCENT = 0.05
+BASE_DEADBAND_PERCENT = 0.30
 MIN_DEADBAND = 100
 # DEADBAND = 100  # how big a left/right difference must be before moving
 MOVE_TIME = 0.2  # seconds the motor runs per correction
