@@ -8,9 +8,9 @@ print(f"{get_stamp()}, ALARM, STATUS, Connections are set ")
 def alarm(enable=1):
     EN.value(enable)
     if enable:
-        print(f"{get_stamp()}, ALARM, ACTION, Sounded Alarm")
+        print(f"{get_stamp()},ALARM,ACTION,Sounded Alarm")
     else:
-        print(f"{get_stamp()}, ALARM, ACTION, Silenced Alarm")
+        print(f"{get_stamp()},ALARM,ACTION,Silenced Alarm")
 
 
 # alarm(0)

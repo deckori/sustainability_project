@@ -2,11 +2,14 @@ import sys
 
 sys.path.append("modules")
 
+from modules.stamp import get_stamp
+
+print(f"{get_stamp()},SYSTEM,STATUS,Initializing system...")
+
 from modules.alarm import alarm
 from modules.ldr import check_ldr
 from modules.temperature import temperature
 from modules.turn_motor import stop_motor
-from modules.stamp import get_stamp
 import _thread
 import time
 
@@ -14,7 +17,7 @@ import time
 
 DELAY = 2  # seconds between checks
 
-print(f"{get_stamp()}, SYSTEM, STATUS, Starting main loop...")
+print(f"{get_stamp()},SYSTEM,STATUS,Starting main loop...")
 
 try:
     while True:
@@ -35,7 +38,7 @@ try:
 
         time.sleep(DELAY)
 except KeyboardInterrupt:
-    print(f"{get_stamp()}, SYSTEM, STATUS, Interrupted by user. Cleaning up...")
+    print(f"{get_stamp()},SYSTEM,STATUS,Interrupted by user. Cleaning up...")
     alarm(0)  # Ensure the alarm turns off when exiting
     stop_motor()
-    print(f"{get_stamp()}, SYSTEM, STATUS, Stopped safely.")
+    print(f"{get_stamp()},SYSTEM,STATUS,Stopped safely.")
