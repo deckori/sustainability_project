@@ -13,7 +13,7 @@ import time
 
 DELAY = 2  # seconds between checks
 
-print("[SYSTEM] Starting main loop...")
+print(f"{get_stamp()}, SYSTEM, STATUS, Starting main loop...")
 
 try:
     while True:
@@ -34,7 +34,7 @@ try:
 
         time.sleep(DELAY)
 except:
-    print("\n[SYSTEM] Interrupted by user. Cleaning up...")
+    print(f"{get_stamp()}, SYSTEM, STATUS, Interrupted by user. Cleaning up...")
     alarm(0)  # Ensure the alarm turns off when exiting
     stop_motor()
-    print("[SYSTEM] Stopped safely.")
+    print(f"{get_stamp()}, SYSTEM, STATUS, Stopped safely.")
