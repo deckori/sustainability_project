@@ -31,12 +31,12 @@ def check_ldr():
     # Check maximum intensity to see if there is enough ambient light to track
     max_light = max(left, right)
 
-    # if max_light < MIN_LIGHT_THRESHOLD:
-    #     stop_motor()
-    #     print(
-    #         f"{get_stamp()}, LDR, STATUS, Low Light ({max_light} < {MIN_LIGHT_THRESHOLD}); Stay"
-    #     )
-    #     return True
+    if max_light < MIN_LIGHT_THRESHOLD:
+        stop_motor()
+        print(
+            f"{get_stamp()}, LDR, STATUS, Low Light ({max_light} < {MIN_LIGHT_THRESHOLD}); Stay"
+        )
+        return True
 
     # Calculate average light level to gauge current brightness
     avg_light = (left + right) / 2
