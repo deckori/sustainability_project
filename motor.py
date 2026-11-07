@@ -1,5 +1,5 @@
-from machine import Pin, PWM, ADC, RTC
-from time import sleep, ticks_ms
+from machine import Pin, PWM
+from time import sleep
 from stamp import get_stamp
 
 # Initialize motor driver pins and PWM frequency (1 kHz)
@@ -15,51 +15,44 @@ direction = LPWM
 def motor_turn(state, enable=1):
     # Motor speed value mapped to MicroPython's 16-bit PWM range (0 - 65535)
     # A value of 38588 roughly corresponds to ~60% speed.
-    turn_speed.duty_u16(38588)
+    turn_speed.duty_u16(38588 if enable else 0)
     direction.value(state)
     EN.value(enable)
 
 
-_motor_state = None
-
-_motor_state = None  # Tracks current state: "CLOCKWISE", "ANTICLOCKWISE", "STOP"
-
-
-def _set_motor_state(state, action_label):
-    global _motor_state
-
-    # If the state hasn't changed, do nothing
-    if state == _motor_state:
-        return
-
-    _motor_state = state
-
-    if state == "CLOCKWISE":
-        motor_turn(1)
-    elif state == "ANTICLOCKWISE":
-        motor_turn(0)
-    else:  # STOP
-        motor_turn(0, enable=0)
-
-    print(f"{get_stamp()}, MOTOR, ACTION, {action_label}")
-    sleep(1)
-
-
-def clock():
-    _set_motor_state("CLOCKWISE", "Clockwise")
-
-
-def anticlock():
-    _set_motor_state("ANTICLOCKWISE", "Anti-clockwise")
+_motor_stopped = False
 
 
 def stop():
-    _set_motor_state("STOP", "Stopped")
+    global _motor_stopped
+    if _motor_stopped:
+        return
+
+    motor_turn(0, enable=0)
+    _motor_stopped = True
+    print(f"{get_stamp()},MOTOR,ACTION,Stopped")
+
+
+def clock(duration=1):
+    global _motor_stopped
+    _motor_stopped = False
+    print(f"{get_stamp()},MOTOR,ACTION,Clockwise")
+    motor_turn(1)
+    sleep(duration)
+    stop()
+
+
+def anticlock(duration=1):
+    global _motor_stopped
+    _motor_stopped = False
+    print(f"{get_stamp()},MOTOR,ACTION,Anti-clockwise")
+    motor_turn(0)
+    sleep(duration)
+    stop()
 
 
 # Set motor to stop at boot
 stop()
-
 
 # print("turn")
 # stop()
