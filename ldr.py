@@ -1,6 +1,6 @@
 from machine import Pin, ADC
 from stamp import get_stamp
-from turn_motor import turn_anticlockwise, turn_clockwise, stop_motor
+import motor
 
 # ---- LDRs (each divider: 3.3V -> LDR -> pin -> 10k -> GND) ----
 left_ldr = ADC(Pin(32))  # was A0 in the drawing
@@ -32,7 +32,7 @@ def check_ldr():
     max_light = max(left, right)
 
     if max_light < MIN_LIGHT_THRESHOLD:
-        stop_motor()
+        motor.stop()
         print(
             f"{get_stamp()}, LDR, STATUS, Low Light ({max_light} < {MIN_LIGHT_THRESHOLD}); Stay"
         )
@@ -52,12 +52,12 @@ def check_ldr():
     if error > scaled_deadband:
         if right > left:
             print(f"{get_stamp()},LDR,STATUS,Clockwise")
-            turn_clockwise()
+            motor.clock()
         else:
             print(f"{get_stamp()},LDR,STATUS,Anti-clockwise")
-            turn_anticlockwise()
+            motor.anticlock()
     else:
         print(f"{get_stamp()},LDR,STATUS,Stay")
-        stop_motor()
+        motor.stop()
 
     return True
