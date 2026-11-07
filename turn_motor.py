@@ -12,37 +12,58 @@ turn_speed = RPWM
 direction = LPWM
 
 
-def motor_turn(state, speed, enable=1):
+def motor_turn(state, enable=1):
     # Motor speed value mapped to MicroPython's 16-bit PWM range (0 - 65535)
     # A value of 38588 roughly corresponds to ~60% speed.
-    turn_speed.duty_u16(speed)
+    turn_speed.duty_u16(38588)
     direction.value(state)
     EN.value(enable)
 
 
-def stop_motor():
-    # Cuts all power and disables the motor driver
-    motor_turn(state=0, speed=38588, enable=0)
-    print(f"{get_stamp()},MOTOR,ACTION,Stopping")
+_motor_state = None
+
+_motor_state = None  # Tracks current state: "CLOCKWISE", "ANTICLOCKWISE", "STOP"
 
 
-def turn_clockwise(speed=38588):
-    motor_turn(1, speed)
-    print(f"{get_stamp()},MOTOR,ACTION,Turning clockwise")
+def _set_motor_state(state, action_label):
+    global _motor_state
+
+    # If the state hasn't changed, do nothing
+    if state == _motor_state:
+        return
+
+    _motor_state = state
+
+    if state == "CLOCKWISE":
+        motor_turn(1)
+    elif state == "ANTICLOCKWISE":
+        motor_turn(0)
+    else:  # STOP
+        motor_turn(0, enable=0)
+
+    print(f"{get_stamp()}, MOTOR, ACTION, {action_label}")
     sleep(1)
-    stop_motor()
 
 
-def turn_anticlockwise(speed=38588):
-    motor_turn(0, speed)
-    print(f"{get_stamp()},MOTOR,ACTION,Turning anticlockwise")
-    sleep(1)
-    stop_motor()
+def clock():
+    _set_motor_state("CLOCKWISE", "Clockwise")
+
+
+def anticlock():
+    _set_motor_state("ANTICLOCKWISE", "Anti-clockwise")
+
+
+def stop():
+    _set_motor_state("STOP", "Stopped")
+
+
+# Set motor to stop at boot
+stop()
 
 
 # print("turn")
-# stop_motor()
+# stop()
 # sleep(2)
-# turn_clockwise()
-# turn_anticlockwise()
+# clock()
+# anticlock()
 # print("set")
