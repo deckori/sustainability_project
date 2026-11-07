@@ -6,7 +6,7 @@ from stamp import get_stamp
 RPWM = PWM(Pin(25), freq=1000)
 LPWM = Pin(26, Pin.OUT)
 EN = Pin(27, Pin.OUT)
-print(f"{get_stamp()},MOTOR,STATUS,Pins set ")
+print(f"{get_stamp()},MOTOR,STATUS,Pins set")
 
 turn_speed = RPWM
 direction = LPWM

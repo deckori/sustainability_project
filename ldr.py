@@ -5,7 +5,7 @@ import motor
 # ---- LDRs (each divider: 3.3V -> LDR -> pin -> 10k -> GND) ----
 left_ldr = ADC(Pin(32))  # was A0 in the drawing
 right_ldr = ADC(Pin(33))  # was A1 in the drawing
-print(f"{get_stamp()},LDR,STATUS,Connections are set ")
+print(f"{get_stamp()},LDR,STATUS,Connections are set")
 
 left_ldr.atten(ADC.ATTN_11DB)  # read the full 0-3.3 V range
 right_ldr.atten(ADC.ATTN_11DB)
@@ -34,7 +34,7 @@ def check_ldr():
     if max_light < MIN_LIGHT_THRESHOLD:
         motor.stop()
         print(
-            f"{get_stamp()}, LDR, STATUS, Low Light ({max_light} < {MIN_LIGHT_THRESHOLD}); Stay"
+            f"{get_stamp()},LDR,STATUS,Low Light ({max_light} < {MIN_LIGHT_THRESHOLD}); Stay"
         )
         return True
 

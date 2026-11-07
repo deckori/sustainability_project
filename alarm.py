@@ -2,7 +2,7 @@ from machine import Pin
 from stamp import get_stamp
 
 EN = Pin(23, Pin.OUT)
-print(f"{get_stamp()}, ALARM, STATUS, Connections are set ")
+print(f"{get_stamp()},ALARM,STATUS,Connections are set")
 _alarm_state = None
 
 

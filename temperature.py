@@ -4,7 +4,7 @@ from time import sleep_ms
 from stamp import get_stamp
 
 ds = ds18x20.DS18X20(onewire.OneWire(machine.Pin(4)))
-print(f"{get_stamp()},TEMP,STATUS,Pins set ")
+print(f"{get_stamp()},TEMP,STATUS,Pins set")
 
 
 def temperature():
