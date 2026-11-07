@@ -5,7 +5,7 @@ print(f"{get_stamp()},SYSTEM,STATUS,Initializing system...")
 from alarm import alarm
 from ldr import check_ldr
 from temperature import temperature
-from turn_motor import stop_motor
+import motor
 import _thread
 import time
 
@@ -36,5 +36,5 @@ try:
 except KeyboardInterrupt:
     print(f"{get_stamp()},SYSTEM,STATUS,Interrupted by user. Cleaning up...")
     alarm(0)  # Ensure the alarm turns off when exiting
-    stop_motor()
+    motor.stop()
     print(f"{get_stamp()},SYSTEM,STATUS,Stopped safely.")
