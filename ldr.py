@@ -21,10 +21,11 @@ def check_ldr():
     left = left_ldr.read()
     right = right_ldr.read()
 
-    if left == 0 and right != 0:
+    # In high intensity, the other LDR would never be zero unless something was blocking it or there's a circuit issue. adding the check for the non-zero LDR ensures that the alarm isn't rung when there's a small amount of light
+    if left == 0 and right > MIN_LIGHT_THRESHOLD:
         print(f"{get_stamp()},LDR,ERROR,Left LDR Connection Issue")
         return None
-    if left != 0 and right == 0:
+    if left > MIN_LIGHT_THRESHOLD and right == 0:
         print(f"{get_stamp()},LDR,ERROR,Right LDR Connection Issue")
         return None
 
