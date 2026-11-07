@@ -1,0 +1,25 @@
+$$
+	\begin{aligned}
+		\text{BASE_DEADBAND_PERCENT} & = 0.30                                               \\
+		\text{MIN_DEADBAND}          & = 100                                                \\
+		\text{MIN_LIGHT_THRESHOLD}   & = 1000                                               \\
+		\text{avg_light}             & = \frac{\text{left} + \text{right}}{2}               \\
+		\text{max_light}             & = \max(\text{left}, \text{right})                    \\
+		\text{error}                 & = |\text{right} - \text{left}|                       \\
+		\text{scaled_deadband}       & = \max (\text{MIN_DEADBAND}, \text{avg_light} \times
+
+
+		\text{BASE_DEADBAND_PERCENT})
+	\end{aligned}
+$$
+
+$$
+	M =
+	\begin{cases}
+		\text{Clockwise}      & \text{if } \text{max_light} \ge \text{MIN_LIGHT_THRESHOLD} \text{ and }         \\
+		                      & \text{error} > \text{scaled_deadband} \text{ and } \text{right} > \text{left}   \\
+		\text{Anti-clockwise} & \text{if } \text{max_light} \ge \text{MIN_LIGHT_THRESHOLD} \text{ and }         \\
+		                      & \text{error} > \text{scaled_deadband} \text{ and } \text{right} \le \text{left} \\
+		\text{Stay}           & \text{otherwise}
+	\end{cases}
+$$

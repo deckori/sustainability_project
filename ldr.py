@@ -13,6 +13,7 @@ right_ldr.atten(ADC.ATTN_11DB)
 # ---- Settings ----
 BASE_DEADBAND_PERCENT = 0.30
 MIN_DEADBAND = 100
+MIN_LIGHT_THRESHOLD = 1000
 
 
 # ---- Main loop ----
@@ -20,12 +21,22 @@ def check_ldr():
     left = left_ldr.read()
     right = right_ldr.read()
 
-    if left == 0:
+    if left == 0 and right != 0:
         print(f"{get_stamp()},LDR,ERROR,Left LDR Connection Issue")
         return None
-    if right == 0:
+    if left != 0 and right == 0:
         print(f"{get_stamp()},LDR,ERROR,Right LDR Connection Issue")
         return None
+
+    # Check maximum intensity to see if there is enough ambient light to track
+    max_light = max(left, right)
+
+    # if max_light < MIN_LIGHT_THRESHOLD:
+    #     stop_motor()
+    #     print(
+    #         f"{get_stamp()}, LDR, STATUS, Low Light ({max_light} < {MIN_LIGHT_THRESHOLD}); Stay"
+    #     )
+    #     return True
 
     # Calculate average light level to gauge current brightness
     avg_light = (left + right) / 2
@@ -40,13 +51,13 @@ def check_ldr():
 
     if error > scaled_deadband:
         if right > left:
-            turn_clockwise()
             print(f"{get_stamp()},LDR,STATUS,Clockwise")
+            turn_clockwise()
         else:
-            turn_anticlockwise()
             print(f"{get_stamp()},LDR,STATUS,Anti-clockwise")
+            turn_anticlockwise()
     else:
-        stop_motor()
         print(f"{get_stamp()},LDR,STATUS,Stay")
+        stop_motor()
 
     return True

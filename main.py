@@ -1,15 +1,11 @@
-import sys
-
-sys.path.append("modules")
-
-from modules.stamp import get_stamp
+from stamp import get_stamp
 
 print(f"{get_stamp()},SYSTEM,STATUS,Initializing system...")
 
-from modules.alarm import alarm
-from modules.ldr import check_ldr
-from modules.temperature import temperature
-from modules.turn_motor import stop_motor
+from alarm import alarm
+from ldr import check_ldr
+from temperature import temperature
+from turn_motor import stop_motor
 import _thread
 import time
 
