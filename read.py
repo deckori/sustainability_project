@@ -31,6 +31,7 @@ with (
 
             # Route and write to specific files based on tags sent from ESP32
             outputs.write(line + "\n")
+            outputs.flush()
 
     except KeyboardInterrupt:
         print("\nStopping logger and closing files...")
